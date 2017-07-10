@@ -11,6 +11,9 @@ See the file COPYING for license details.
 #include <arpa/inet.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "../src/util.h"
 #include "nids.h"
 
 #define int_ntoa(x)	inet_ntoa(*((struct in_addr *)&x))
