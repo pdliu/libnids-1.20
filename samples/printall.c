@@ -114,6 +114,17 @@ main ()
 {
   // here we can alter libnids params, for instance:
   // nids_params.n_hosts=256;
+
+  print("enter printall main");
+
+struct nids_chksum_ctl temp;
+temp.netaddr = 0;
+temp.mask = 0;
+temp.action = 1;
+nids_register_chksum_ctl(&temp,1);
+
+
+
   if (!nids_init ())
   {
   	fprintf(stderr,"%s\n",nids_errbuf);

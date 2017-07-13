@@ -408,6 +408,8 @@ static int open_live()
     char *device;
     int promisc = 0;
 
+    print("open_live");
+
     if (nids_params.device == NULL)
 	nids_params.device = pcap_lookupdev(nids_errbuf);
     if (nids_params.device == NULL)

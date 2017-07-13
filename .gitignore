@@ -8,5 +8,7 @@ config.status
 Makefile
 
 printall
+overflows
+sniff
 
 .vscode/
