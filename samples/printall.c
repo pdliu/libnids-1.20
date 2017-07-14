@@ -117,12 +117,13 @@ main ()
 
   print("enter printall main");
 
+
+// fix the bug of not able to capture packets
 struct nids_chksum_ctl temp;
 temp.netaddr = 0;
 temp.mask = 0;
 temp.action = 1;
 nids_register_chksum_ctl(&temp,1);
-
 
 
   if (!nids_init ())
