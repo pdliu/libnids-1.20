@@ -1,0 +1,6 @@
+install libpcap & libnet, then
+$su root
+$ldconfig
+
+$gcc -g -o printall printall.c -lnids -lpcap -lnet
+$./printall
