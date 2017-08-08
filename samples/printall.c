@@ -106,6 +106,10 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
     fprintf(stderr,"%s",buf); // we print the connection parameters
                               // (saddr, daddr, sport, dport) accompanied
                               // by data flow direction (-> or <-)
+    static int print_count = 0;
+    fprintf(stderr,"\n\n------No. %d",++print_count);
+    print("-------by pdliu-------------------\n\n\n\n\n\n");
+    print("------New packet------------------------------\n");
 
     write(2,hlf->data,hlf->count_new); // we print the newly arrived data
       
@@ -136,7 +140,7 @@ nids_register_chksum_ctl(&temp,1);
   	fprintf(stderr,"%s\n",nids_errbuf);
   	exit(1);
   }
-  
+
   nids_register_tcp (tcp_callback);
   nids_run ();
   return 0;
