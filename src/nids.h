@@ -144,4 +144,6 @@ extern void nids_register_chksum_ctl(struct nids_chksum_ctl *, int);
 #define print(A) fprintf(stderr, A);\
                  fprintf(stderr,"\n");
 
+#define printcat(A) fprintf(stderr,A)
+
 #endif /* _NIDS_NIDS_H */
