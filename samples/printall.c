@@ -166,6 +166,16 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
         write(2,hlf->data,hlf->count_new); // we print the newly arrived data  
 
         print("\n------End char hlf->data------");
+
+
+        
+        // print other parts of the tcp_stream
+        fprintf(stderr, "\n------hash_index: %d------read: %d------", a_tcp->hash_index, a_tcp->read);
+        
+        fprintf(stderr, "\n------bufsize: %d------", hlf->bufsize);
+
+
+
       }
       break;
 
