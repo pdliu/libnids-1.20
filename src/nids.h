@@ -42,8 +42,8 @@ enum
 
 struct tuple4
 {
-  u_short source;
-  u_short dest;
+  u_short source;      // source port
+  u_short dest;        // destination port
   u_int saddr;
   u_int daddr;
 };

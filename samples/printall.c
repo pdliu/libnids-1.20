@@ -116,13 +116,12 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
       {
         static int data_count = 0;
         fprintf(stderr,"------NIDS_DATA No. %d------\n",++data_count);
+        fprintf(stderr,"------a_tcp->client.collect = %d, collect_urg = %d------\n", a_tcp->client.collect, a_tcp->client.collect_urg);
+        fprintf(stderr,"------a_tcp->server.collect = %d, collect_urg = %d------\n", a_tcp->server.collect, a_tcp->server.collect_urg);
+
 
         // new data has arrived; gotta determine in what direction
         // and if it's urgent or not
-
-        struct half_stream *hlf;
-
-        fprintf (stderr, "\n------a_tcp->server.count_new_urg = %d-----\n", (int)a_tcp->server.count_new_urg);
 
         if (a_tcp->server.count_new_urg)
         {
@@ -133,14 +132,18 @@ tcp_callback (struct tcp_stream *a_tcp, void ** this_time_not_needed)
           write(1,buf,strlen(buf));
           return;
         }
+
         // We don't have to check if urgent data to client has arrived,
         // because we haven't increased a_tcp->client.collect_urg variable.
         // So, we have some normal data to take care of.
+        
+        struct half_stream *hlf;
+
         if (a_tcp->client.count_new)
         {
-                // new data for client
+          // new data for client
           hlf = &a_tcp->client; // from now on, we will deal with hlf var,
-                                      // which will point to client side of conn
+                                // which will point to client side of conn
           strcat (buf, "(<-)"); // symbolic direction of data
         }
         else
