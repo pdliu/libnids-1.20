@@ -40,25 +40,30 @@ enum
 #define NIDS_DO_CHKSUM  0
 #define NIDS_DONT_CHKSUM 1
 
+// The members of the tuple4 structure identify a unique TCP connection:
 struct tuple4
 {
-  u_short source;      // source port
-  u_short dest;        // destination port
-  u_int saddr;
-  u_int daddr;
+  u_short source;      // client and server port numbers
+  u_short dest;        // client and server port numbers
+  u_int saddr;         // client and server ip addresses
+  u_int daddr;         // client and server ip addresses
 };
 
+// The members of the half_stream structure describe each half of a TCP connection (client and server):
 struct half_stream
 {
-  char state;
-  char collect;
-  char collect_urg;
+  char state;         // Socket state (e.g. TCP_ESTABLISHED).
+  char collect;       // A boolean which specifies whether to collect data for this half of the connection in the data buffer.  
+  char collect_urg;   // A boolean which specifies whether to collect urgent data pointed to by the TCP 
+                      // urgent pointer for this half of the connection in the urgdata buffer.
 
-  char *data;
-  int offset;
-  int count;
-  int count_new;
-  int bufsize;
+  char *data;         // Buffer for normal data
+  int offset;         // The current offset from the first byte stored in the data buffer, 
+                      // identifying the start of newly received data.  
+  int count;          // The number of bytes appended to data since the creation of the connection.  
+  int count_new;      // The number of bytes appended to data since the last invocation of the TCP callback 
+                      // function (if 0, no new data arrived).
+  int bufsize;        // 
   int rmem_alloc;
 
   int urg_count;
@@ -131,11 +136,16 @@ struct nids_prm
   int pcap_timeout;   // Sets the pcap read timeout, which may or may not be supported by your platform. Default value: 1024.
 };
 
-int nids_init (void);
-void nids_register_ip_frag (void (*));
-void nids_register_ip (void (*));
-void nids_register_tcp (void (*));
-void nids_register_udp (void (*));
+int nids_init (void); // initializes the application for sniffing, based on the values set in the 
+                      // global variable nids_params, Returns 1 on success, 0 on failure (in which 
+                      // case nids_errbuf contains an appropriate error message).
+void nids_register_ip_frag (void (*)); // registers a user-defined callback function to process all incoming 
+                                       // IP packets (including IP fragments, packets with invalid checksums, etc.).
+void nids_register_ip (void (*));      // registers a user-defined callback function to process IP 
+                                       // packets validated and reassembled by libnids.
+void nids_register_tcp (void (*));     // registers a user-defined callback function to process TCP 
+                                       // streams validated and reassembled by libnids. 
+void nids_register_udp (void (*));     // 
 void nids_killtcp (struct tcp_stream *);
 void nids_discard (struct tcp_stream *, int);
 void nids_run (void);
