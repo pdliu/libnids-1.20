@@ -97,23 +97,38 @@ struct tcp_stream
 
 struct nids_prm
 {
-  int n_tcp_streams;
-  int n_hosts;
-  char *device;
-  char *filename;
-  int sk_buff_size;
-  int dev_addon;
-  void (*syslog) ();
-  int syslog_level;
-  int scan_num_hosts;
-  int scan_delay;
-  int scan_num_ports;
-  void (*no_mem) (char *);
-  int (*ip_filter) ();
-  char *pcap_filter;
-  int promisc;
-  int one_loop_less;
-  int pcap_timeout;
+  int n_tcp_streams;  // Size of the hash table used for storing TCP connection information 
+                      // (a maximum of 3/4 * n_tcp_streams TCP connections will be followed simultaneously). 
+                      // Default value: 1024
+  int n_hosts;        // Size of the hash table used for storing IP defragmentation information. Default value: 256
+  char *device;       // Interface to monitor. Default value: NULL(in which case an appropriate device is determined automatically).
+                      // If this variable is assigned value all, libnids will attempt to capture packets on all interfaces (which works on Linux only)
+  char *filename;     // It this variable is set, libnids will call pcap_open_offline 
+                      // with this variable as the argument (instead of pcap_open_live()). Default value: NULL
+  int sk_buff_size;   // Size of struct sk_buff (used for queuing packets), which should be set to
+                      // match the value on the hosts being monitored. Default value: 168
+  int dev_addon;      // Number of bytes in struct sk_buff reserved for link-layer information. Default value: 
+                      // -1 (in which case an appropriate offset if determined automatically based on link-layer type)
+  void (*syslog) ();  // Syslog callback function, used to report unusual conditions, such as port scan attempts, invalid TCP header flags, etc. 
+                      // Default value: nids_syslog (which logs messages via syslog without regard for message rate per second or free disk space)
+  int syslog_level;   // Log level used by nids_syslog for reporting events via syslog. Default value: LOG_ALERT  
+  int scan_num_hosts; // Size of hash table used for storing portscan information (the maximum number portscans that will be detected simultaneously). 
+                      // If set to 0, portscan detection will be disabled. Default value: 256
+  int scan_delay;     // Maximum delay (in milliseconds) between connections to different ports for them to 
+                      // be identified as part of a portscan. Default value: 3000
+  int scan_num_ports; // Minimum number of ports that must be scanned from the same source host before it is 
+                      // identifed as a portscan. Default value: 10
+  void (*no_mem) (char *); // Out-of-memory callback function, used to terminate the calling process gracefully.
+  int (*ip_filter) ();// IP filtering callback function, used to selectively discard IP packets, inspected after reassembly. 
+                      // If the function returns a non-zero value, the packet is processed; otherwise, it is discarded. 
+                      // Default value: nids_ip_filter (which always returns 1)
+  char *pcap_filter;  // pcap filter string applied to the link-layer (raw, unassembled) packets. 
+                      // Note: filters like ''tcp dst port 23'' will NOT correctly handle appropriately 
+                      // fragmented traffic, e.g. 8-byte IP fragments; one should add "or (ip[6:2] & 0x1fff != 0)" 
+                      // at the end of the filter to process reassembled packets. Default value: NULL
+  int promisc;        // If non-zero, libnids will set the interface(s) it listens on to promiscuous mode. Default value: 1
+  int one_loop_less;  // Disabled by default; see comments in API.html file
+  int pcap_timeout;   // Sets the pcap read timeout, which may or may not be supported by your platform. Default value: 1024.
 };
 
 int nids_init (void);
